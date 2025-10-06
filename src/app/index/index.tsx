@@ -3,7 +3,6 @@ import { colors } from '@/constants/colors';
 import { MaterialIcons } from '@expo/vector-icons';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { router } from 'expo-router';
-import { useEffect } from 'react';
 import { Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Doing } from './(tabs)/doing';
@@ -15,10 +14,6 @@ const Tab = createMaterialTopTabNavigator();
 
 export default function Index() {
 
-
-  useEffect(() => {
-
-  })
 
 
   return (
@@ -37,7 +32,7 @@ export default function Index() {
           }}
         >
           <Tab.Screen
-            name="Todo" component={Todo} />
+            name="To-do" component={Todo} />
           <Tab.Screen
             name="Doing" component={Doing} />
           <Tab.Screen

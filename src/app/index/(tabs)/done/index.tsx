@@ -1,10 +1,11 @@
 import { task, Task } from '@/components/Task'
 import * as taskSchema from '@/database/schemas/taskSchema'
+import { useFocusEffect } from '@react-navigation/native'
 import { asc, eq } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/expo-sqlite'
 import { useSQLiteContext } from 'expo-sqlite'
-import React, { useEffect, useState } from 'react'
-import { FlatList, View } from 'react-native'
+import React, { useCallback, useState } from 'react'
+import { Alert, FlatList, View } from 'react-native'
 import { styles } from './styles'
 
 
@@ -25,7 +26,7 @@ export function Done() {
         }
 
         updatestatus(task.id)
-        fetchdone()
+
     }
 
     const database = useSQLiteContext()
@@ -49,16 +50,23 @@ export function Done() {
 
     async function updatestatus(id: number) {
 
-        const response = await db.update(taskSchema.tasks).set({
-            status
-        }).where(eq(taskSchema.tasks.id, id))
+        try {
+            const response = await db.update(taskSchema.tasks).set({
+                status: status
+            }).where(eq(taskSchema.tasks.id, id))
 
-        console.log(response)
+            Alert.alert(`TASK`, 'Return Task to TODO-DO list')
+            await fetchdone()
+        } catch (error) {
+            console.log(error)
+        }
     }
 
-    useEffect(() => {
-        fetchdone()
-    }, [status])
+    useFocusEffect(
+        useCallback(() => {
+            fetchdone();
+        }, [])
+    );
 
     return (
         <View style={styles.container}>

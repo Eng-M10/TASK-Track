@@ -1,10 +1,11 @@
 import { task, Task } from '@/components/Task'
 import * as taskSchema from '@/database/schemas/taskSchema'
+import { useFocusEffect } from '@react-navigation/native'
 import { asc, eq } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/expo-sqlite'
 import { useSQLiteContext } from 'expo-sqlite'
-import React, { useEffect, useState } from 'react'
-import { FlatList, View } from 'react-native'
+import React, { useCallback, useState } from 'react'
+import { Alert, FlatList, View } from 'react-native'
 import { styles } from './styles'
 
 
@@ -26,7 +27,7 @@ export function Doing() {
         task.status = status
 
         updatestatus(task.id)
-        fetchdoing()
+
     }
 
     const database = useSQLiteContext()
@@ -50,17 +51,25 @@ export function Doing() {
 
     async function updatestatus(id: number) {
 
-        const response = await db.update(taskSchema.tasks).set({
-            status
-        }).where(eq(taskSchema.tasks.id, id))
+        try {
 
-        console.log(response)
+            const response = await db.update(taskSchema.tasks).set({
+                status
+            }).where(eq(taskSchema.tasks.id, id))
+            Alert.alert(`TASK`, 'Pass to Done tasks list')
+            await fetchdoing()
+        } catch (error) {
+
+            console.log(error)
+
+        }
+
     }
-
-    useEffect(() => {
-        fetchdoing()
-    }, [status])
-
+    useFocusEffect(
+        useCallback(() => {
+            fetchdoing();
+        }, [])
+    );
     return (
         <View style={styles.container}>
 

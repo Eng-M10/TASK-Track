@@ -1,10 +1,11 @@
 import { task, Task } from '@/components/Task'
 import * as taskSchema from '@/database/schemas/taskSchema'
+import { useFocusEffect } from '@react-navigation/native'
 import { asc, eq } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/expo-sqlite'
 import { useSQLiteContext } from 'expo-sqlite'
-import React, { useEffect, useState } from 'react'
-import { FlatList, View } from 'react-native'
+import React, { useCallback, useState } from 'react'
+import { Alert, FlatList, View } from 'react-native'
 import { styles } from './styles'
 
 
@@ -14,19 +15,17 @@ export function Todo() {
   const [tasks, setTasks] = useState<task[]>([])
 
   function handleChangeStatus(task: task) {
-    const status = task.status
 
-    if (status === "todo") {
+    if (task.status === "todo") {
       setStatus("doing")
-    } else if (status === "doing") {
+    } else if (task.status === "doing") {
       setStatus("done")
     } else {
       setStatus("todo")
     }
-    task.status = status
 
     updatestatus(task.id)
-    fetchtodo()
+
   }
 
   const database = useSQLiteContext()
@@ -49,18 +48,26 @@ export function Todo() {
   }
 
   async function updatestatus(id: number) {
+    try {
 
-    const response = await db.update(taskSchema.tasks).set({
-      status
-    }).where(eq(taskSchema.tasks.id, id))
+      const response = await db.update(taskSchema.tasks).set({
+        status
+      }).where(eq(taskSchema.tasks.id, id))
+      Alert.alert(`TASK`, 'Pass to doing list')
+      await fetchtodo()
 
-    console.log(response)
+    } catch (error) {
+
+      console.log(error)
+    }
+
   }
 
-  useEffect(() => {
-    fetchtodo()
-  }, [status])
-
+  useFocusEffect(
+    useCallback(() => {
+      fetchtodo();
+    }, [])
+  );
   return (
     <View style={styles.container}>
 

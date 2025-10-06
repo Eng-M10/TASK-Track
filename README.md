@@ -48,3 +48,14 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+
+
+
+Verificar como executar o fecth para cada tab , ou seja quando sair do tab todo para o doing executar o fetch para o doing se ir para o done executar para o done, assim sucessivamente.
+
+. implementar , update e delete task
+. implementar search task e filter by priority,
+. implementar details com modal 
+. implementar notificacoes
+. pre-release 

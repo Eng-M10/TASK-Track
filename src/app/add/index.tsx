@@ -89,13 +89,11 @@ export default function Add() {
 
 
 
-
-
   async function add({ title, description, priority, schedule }: Task) {
     try {
       const response = await db.insert(taskSchema.tasks).values({ title, description, schedule, priority })
       console.log(response)
-      Alert.alert("Cadastrado com o ID: " + response.lastInsertRowId)
+      Alert.alert("SUCCESSFULLY", "TASK SAVED")
       setTitle("")
       setDescription("")
       setDate(new Date())
@@ -105,10 +103,6 @@ export default function Add() {
       console.log(error)
     }
   }
-
-
-
-
 
 
 
