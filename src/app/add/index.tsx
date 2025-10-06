@@ -38,7 +38,7 @@ export default function Add() {
   const [selected, setSelected] = useState(null)
   const [textcaracter, setTextCaracter] = useState(0)
   const [showPicker, setShowPicker] = useState(false);
-  const maxLengt = 120
+  const maxLengt = 300
 
   const database = useSQLiteContext()
 

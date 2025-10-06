@@ -8,17 +8,16 @@ export const styles = StyleSheet.create({
         gap: 8,
         alignItems: "center",
         padding: 14,
-        flex: 1,
-        borderColor: colors.blue[800],
-        borderWidth: .3,
+        borderColor: colors.blue[900],
+        borderWidth: .5,
         borderRadius: 13,
+        flex: 1
 
     },
     detailsbox: {
         gap: 16,
     },
     checkbutton: {
-        flex: 1,
         width: 60,
         height: 60,
     },
@@ -27,4 +26,5 @@ export const styles = StyleSheet.create({
         fontWeight: "bold",
         fontSize: 24
     }
+
 })

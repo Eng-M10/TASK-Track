@@ -38,11 +38,11 @@ export const Task = ({ task, onChangeStatus, statusstyle }: Omit<PropTask, "id">
             <View style={styles.detailsbox}>
 
                 <View>
-                    <Text style={[styles.tasktitle, statusstyle]} numberOfLines={1} >{task.title}</Text>
-                    <Text>{task.description}</Text>
+                    <Text style={[styles.tasktitle, statusstyle]} numberOfLines={3} >{task.title}</Text>
+                    <Text numberOfLines={3}>{task.description}</Text>
                 </View>
                 <View>
-                    <Text ><Text style={{ fontWeight: "bold", }} numberOfLines={1}>Scheduled : </Text>{task.schedule.toLocaleString()}</Text>
+                    <Text ><Text style={{ fontWeight: "bold", }} >Scheduled : </Text>{task.schedule.toLocaleString()}</Text>
                 </View>
 
             </View>

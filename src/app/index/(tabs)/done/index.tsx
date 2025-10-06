@@ -17,14 +17,29 @@ export function Done() {
 
     function handleChangeStatus(task: task) {
 
-
-        if (task.status === "todo") {
-            setStatus("doing")
-        } else if (task.status === "doing") {
-            setStatus("done")
-        } else if (task.status === "done") {
-            setStatus("todo")
+        switch (task.status) {
+            case "todo":
+                setStatus("doing")
+                break;
+            case "doing":
+                setStatus("done")
+                break;
+            case "done":
+                setStatus("todo")
+                break;
+            default:
+                setStatus("todo")
+                break;
         }
+
+
+        // if (task.status === "todo") {
+        //     setStatus("doing")
+        // } else if (task.status === "doing") {
+        //     setStatus("done")
+        // } else if (task.status === "done") {
+        //     setStatus("todo")
+        // }
 
         updatestatus(task.id)
 

@@ -43,10 +43,10 @@ export const styles = StyleSheet.create({
         borderRadius: 12,
         padding: 12,
         borderColor: colors.blue[900],
-        height: 120,
+        minHeight: 120,
     },
     button: {
-        marginTop: 24,
+        marginTop: 50,
         backgroundColor: colors.orange[500],
         padding: 14,
         alignItems: "center",

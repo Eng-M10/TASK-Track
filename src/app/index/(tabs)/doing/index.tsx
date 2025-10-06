@@ -15,16 +15,29 @@ export function Doing() {
     const [tasks, setTasks] = useState<task[]>([])
 
     function handleChangeStatus(task: task) {
-        const status = task.status
-
-        if (status === "todo") {
-            setStatus("doing")
-        } else if (status === "doing") {
-            setStatus("done")
-        } else {
-            setStatus("todo")
+        switch (task.status) {
+            case "todo":
+                setStatus("doing")
+                break;
+            case "doing":
+                setStatus("done")
+                break;
+            case "done":
+                setStatus("todo")
+                break;
+            default:
+                setStatus("todo")
+                break;
         }
-        task.status = status
+
+        // if (status === "todo") {
+        //     setStatus("doing")
+        // } else if (status === "doing") {
+        //     setStatus("done")
+        // } else {
+        //     setStatus("todo")
+        // }
+
 
         updatestatus(task.id)
 
