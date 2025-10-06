@@ -48,6 +48,7 @@ export default function Add() {
 
 
   const handleSave = () => {
+    console.log({ date: date })
 
     if (title.trim().length <= 0) {
       return alert("Title is required")
@@ -59,6 +60,8 @@ export default function Add() {
 
     try {
       //console.log("Saving task...", { title, description, priority: selected, date })
+      console.log(typeof date.getDate())
+
       add({ title, description, priority: selected, schedule: date });
 
     } catch (error) {
@@ -125,6 +128,7 @@ export default function Add() {
         <TextInput style={styles.input}
           onChangeText={setTitle}
           placeholder='Title'
+          value={title}
         />
 
         <Text style={styles.label}>Descriptions :</Text>
@@ -133,7 +137,9 @@ export default function Add() {
           style={styles.textarea}
           onChangeText={(value) => [setTextCaracter(value.length), setDescription(value)]}
           numberOfLines={4}
+          multiline
           maxLength={maxLengt}
+          value={description}
           placeholder={'Describe the new task here...'}
           textAlignVertical="top"
           underlineColorAndroid={'transparent'}
@@ -168,6 +174,7 @@ export default function Add() {
         <Text style={styles.label}>Priority :</Text>
 
         <Select
+          value={selected}
           onValueChange={
             setSelected}
           items={[

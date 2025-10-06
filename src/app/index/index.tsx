@@ -1,18 +1,26 @@
 import { FloatingButton } from '@/components/FAB';
 import { colors } from '@/constants/colors';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Text, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Done } from './(_tabs)/done';
-import { Todo } from './(_tabs)/todo';
-import { styles } from './styles';
-
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { router } from 'expo-router';
+import { useEffect } from 'react';
+import { Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Doing } from './(tabs)/doing';
+import { Done } from './(tabs)/done';
+import { Todo } from './(tabs)/todo';
+import { styles } from './styles';
 const Tab = createMaterialTopTabNavigator();
 
 
 export default function Index() {
+
+
+  useEffect(() => {
+
+  })
+
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -30,8 +38,10 @@ export default function Index() {
         >
           <Tab.Screen
             name="Todo" component={Todo} />
-          <Tab.Screen name="Doing" component={Done} />
-          <Tab.Screen name="Done" component={Done} />
+          <Tab.Screen
+            name="Doing" component={Doing} />
+          <Tab.Screen
+            name="Done" component={Done} />
         </Tab.Navigator>
       </View>
 

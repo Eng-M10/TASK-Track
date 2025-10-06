@@ -4,11 +4,11 @@ import { Text, TouchableOpacity, View } from 'react-native';
 import { styles } from './styles';
 
 export type task = {
-    id: string,
+    id: number,
     title: string,
-    description: string,
+    description: string | null,
     status: string,
-    schedule: string,
+    schedule: string | Date,
     priority: number
 }
 
@@ -39,7 +39,7 @@ export const Task = ({ task, onChangeStatus }: Omit<PropTask, "id">) => {
                     <Text>{task.description}</Text>
                 </View>
                 <View>
-                    <Text>{task.schedule}</Text>
+                    <Text>{task.schedule.toString()}</Text>
                 </View>
             </View>
         </View>
