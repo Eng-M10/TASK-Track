@@ -1,4 +1,5 @@
 import { task, Task } from '@/components/Task'
+import { colors } from '@/constants/colors'
 import * as taskSchema from '@/database/schemas/taskSchema'
 import { useFocusEffect } from '@react-navigation/native'
 import { asc, eq } from 'drizzle-orm'
@@ -76,7 +77,7 @@ export function Done() {
                 data={tasks}
                 keyExtractor={item => item.id.toString()}
                 renderItem={({ item }) => (
-                    <Task task={item} onChangeStatus={() => handleChangeStatus(item)} />
+                    <Task task={item} statusstyle={{ textDecorationLine: 'line-through', color: colors.gray[600] }} onChangeStatus={() => handleChangeStatus(item)} />
                 )}
                 contentContainerStyle={{ gap: 14, padding: 14 }}
             />

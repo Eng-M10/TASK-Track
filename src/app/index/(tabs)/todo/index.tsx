@@ -1,4 +1,5 @@
 import { task, Task } from '@/components/Task'
+import { colors } from '@/constants/colors'
 import * as taskSchema from '@/database/schemas/taskSchema'
 import { useFocusEffect } from '@react-navigation/native'
 import { asc, eq } from 'drizzle-orm'
@@ -76,9 +77,9 @@ export function Todo() {
         data={tasks}
         keyExtractor={item => item.id.toString()}
         renderItem={({ item }) => (
-          <Task task={item} onChangeStatus={() => handleChangeStatus(item)} />
+          <Task task={item} statusstyle={{ color: colors.cyan }} onChangeStatus={() => handleChangeStatus(item)} />
         )}
-        contentContainerStyle={{ gap: 14, padding: 14 }}
+        contentContainerStyle={{ gap: 18, padding: 14 }}
       />
     </View>
   )

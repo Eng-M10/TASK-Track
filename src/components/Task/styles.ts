@@ -8,37 +8,23 @@ export const styles = StyleSheet.create({
         gap: 8,
         alignItems: "center",
         padding: 14,
+        flex: 1,
         borderColor: colors.blue[800],
         borderWidth: .3,
         borderRadius: 13,
 
     },
     detailsbox: {
-        gap: 2
-
+        gap: 16,
     },
     checkbutton: {
-        borderRadius: 100,
-        borderWidth: .5,
-        width: 30,
-        height: 30,
-    },
-    checkbuttondoing: {
         flex: 1,
-        borderRadius: 100,
-        borderWidth: .5,
-        width: 30,
-        height: 30,
-        backgroundColor: colors.orange[600]
-    },
-    checkbuttondone: {
-        borderRadius: 100,
-        borderWidth: .5,
-        width: 30,
-        height: 30,
-        backgroundColor: "#0F0"
+        width: 60,
+        height: 60,
     },
     tasktitle: {
-        color: colors.orange[500]
+        color: colors.orange[500],
+        fontWeight: "bold",
+        fontSize: 24
     }
 })

@@ -1,3 +1,4 @@
+import { colors } from '@/constants/colors';
 import { MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
@@ -15,32 +16,35 @@ export type task = {
 
 export type PropTask = {
     task: task
+    statusstyle?: object | null
     onChangeStatus(): void
 }
 
 
-export const Task = ({ task, onChangeStatus }: Omit<PropTask, "id">) => {
+export const Task = ({ task, onChangeStatus, statusstyle }: Omit<PropTask, "id">) => {
 
 
     return (
         <View style={styles.container}>
             <TouchableOpacity style={styles.checkbutton} onPress={onChangeStatus}>
                 {task.status === 'todo' ? (
-                    <MaterialIcons name="check-box-outline-blank" size={24} color="black" />
+                    <MaterialIcons name="check-box-outline-blank" size={60} color={colors.cyan} />
                 ) : task.status === 'doing' ? (
-                    <MaterialIcons name="autorenew" size={24} color="orange" />
+                    <MaterialIcons name="autorenew" size={60} color={colors.orange[500]} />
                 ) : (
-                    <MaterialIcons name="check-box" size={24} color="green" />
+                    <MaterialIcons name="check-box" size={60} color="green" />
                 )}
             </TouchableOpacity>
             <View style={styles.detailsbox}>
+
                 <View>
-                    <Text style={styles.tasktitle}>{task.title}</Text>
+                    <Text style={[styles.tasktitle, statusstyle]} numberOfLines={1} >{task.title}</Text>
                     <Text>{task.description}</Text>
                 </View>
                 <View>
-                    <Text>{task.schedule.toString()}</Text>
+                    <Text ><Text style={{ fontWeight: "bold", }} numberOfLines={1}>Scheduled : </Text>{task.schedule.toLocaleString()}</Text>
                 </View>
+
             </View>
         </View>
     );
