@@ -5,14 +5,17 @@ export const styles = StyleSheet.create({
 
     modal: {
         flex: 1,
-        justifyContent: "flex-end"
+        justifyContent: "flex-end",
     },
     modalContent: {
-        backgroundColor: colors.gray[600],
+        backgroundColor: colors.cyan,
         borderTopWidth: 1,
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
         borderTopColor: colors.gray[400],
-        paddingBottom: 32,
+        paddingBottom: 30,
         padding: 24,
+        zIndex: 100,
     },
     modalHeader: {
         width: "100%",
@@ -27,9 +30,9 @@ export const styles = StyleSheet.create({
         color: colors.gray[400]
     },
     modalLinkName: {
-        fontSize: 18,
+        fontSize: 24,
         fontWeight: "600",
-        color: colors.cyan
+        color: colors.white,
     },
     modalUrl: {
         fontSize: 14,

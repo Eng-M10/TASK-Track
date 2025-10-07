@@ -7,7 +7,10 @@ import { drizzle } from 'drizzle-orm/expo-sqlite';
 import { router } from 'expo-router';
 import { useSQLiteContext } from 'expo-sqlite';
 import React, { useState } from 'react';
+
+import { wait } from '@/utils/wait';
 import {
+  ActivityIndicator,
   Alert,
   Platform,
   Text,
@@ -17,6 +20,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from './styles';
+
 
 type Props = {
   event: any;
@@ -38,6 +42,8 @@ export default function Add() {
   const [selected, setSelected] = useState(null)
   const [textcaracter, setTextCaracter] = useState(0)
   const [showPicker, setShowPicker] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   const maxLengt = 300
 
   const database = useSQLiteContext()
@@ -48,7 +54,7 @@ export default function Add() {
 
 
   const handleSave = () => {
-    console.log({ date: date })
+
 
     if (title.trim().length <= 0) {
       return alert("Title is required")
@@ -59,14 +65,14 @@ export default function Add() {
     }
 
     try {
-      //console.log("Saving task...", { title, description, priority: selected, date })
-      console.log(typeof date.getDate())
-
+      setLoading(true)
       add({ title, description, priority: selected, schedule: date });
-
+      router.back()
     } catch (error) {
       console.log(error)
       return Alert.alert("Error", "There was an error saving the task")
+    } finally {
+      setLoading(false)
     }
 
 
@@ -90,15 +96,16 @@ export default function Add() {
 
 
   async function add({ title, description, priority, schedule }: Task) {
+    const start = Date.now()
     try {
       const response = await db.insert(taskSchema.tasks).values({ title, description, schedule, priority })
-      console.log(response)
-      Alert.alert("SUCCESSFULLY", "TASK SAVED")
+      Alert.alert("Save", "Task was added successfully")
       setTitle("")
       setDescription("")
       setDate(new Date())
       setSelected(null)
-      // await fetchProducts()
+      const elapsed = Date.now() - start
+      if (elapsed < 700) await wait(700 - elapsed)
     } catch (error) {
       console.log(error)
     }
@@ -178,9 +185,22 @@ export default function Add() {
           ]
           }
         />
-        <TouchableOpacity style={styles.button} onPress={() => { handleSave() }}>
+        {/* <TouchableOpacity style={styles.button} onPress={() => { handleSave() }}>
           <Text>Add Task</Text>
+        </TouchableOpacity> */}
+
+        <TouchableOpacity
+          style={[styles.button, loading && { opacity: 0.6 }]}
+          onPress={handleSave}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text>Save</Text>
+          )}
         </TouchableOpacity>
+
       </View>
 
     </SafeAreaView >

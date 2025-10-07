@@ -2,22 +2,24 @@ import { Details } from '@/components/Modal'
 import { task, Task } from '@/components/Task'
 import { colors } from '@/constants/colors'
 import * as taskSchema from '@/database/schemas/taskSchema'
+import { wait } from '@/utils/wait'
 import { useFocusEffect } from '@react-navigation/native'
 import { asc, eq } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/expo-sqlite'
 import { useSQLiteContext } from 'expo-sqlite'
 import React, { useCallback, useState } from 'react'
-import { Alert, FlatList, TouchableOpacity, View } from 'react-native'
+import { FlatList, TouchableOpacity, View } from 'react-native'
 import { styles } from './styles'
 
 
 
 export function Todo() {
 
-  const [status, setStatus] = useState("")
   const [tasks, setTasks] = useState<task[]>([])
   const [showModal, setShowModal] = useState(false);
   const [selectedTask, setSelectedTask] = useState<task | null>(null);
+  const [loadingId, setLoadingId] = useState<number | null>(null);
+  const nextStatus = "doing"
 
   function handleOpenDetails(task: task) {
 
@@ -26,32 +28,8 @@ export function Todo() {
   }
 
   function handleChangeStatus(task: task) {
-
-    switch (task.status) {
-      case "todo":
-        setStatus("doing")
-        break;
-      case "doing":
-        setStatus("done")
-        break;
-      case "done":
-        setStatus("todo")
-        break;
-      default:
-        setStatus("todo")
-        break;
-    }
-
-    // if (task.status === "todo") {
-    //   setStatus("doing")
-    // } else if (task.status === "doing") {
-    //   setStatus("done")
-    // } else {
-    //   setStatus("todo")
-    // }
-
+    setLoadingId(task.id);
     updatestatus(task.id)
-
   }
 
   const database = useSQLiteContext()
@@ -73,18 +51,23 @@ export function Todo() {
 
   }
 
+
+
   async function updatestatus(id: number) {
+    const start = Date.now()
     try {
 
-      const response = await db.update(taskSchema.tasks).set({
-        status
+      await db.update(taskSchema.tasks).set({
+        status: nextStatus
       }).where(eq(taskSchema.tasks.id, id))
-      Alert.alert(`TASK`, 'Pass to doing list')
+
+      const elapsed = Date.now() - start
+      if (elapsed < 700) await wait(700 - elapsed)
       await fetchtodo()
-
     } catch (error) {
-
       console.log(error)
+    } finally {
+      setLoadingId(null);
     }
 
   }
@@ -103,7 +86,7 @@ export function Todo() {
         keyExtractor={item => item.id.toString()}
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => handleOpenDetails(item)}>
-            <Task task={item} statusstyle={{ color: colors.cyan }} onChangeStatus={() => handleChangeStatus(item)} />
+            <Task task={item} statusstyle={{ color: colors.cyan }} loadingId={loadingId} onChangeStatus={() => handleChangeStatus(item)} />
           </TouchableOpacity>
 
           // <Task task={item} statusstyle={{ color: colors.cyan }} onChangeStatus={() => handleChangeStatus(item)} />

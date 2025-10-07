@@ -3,28 +3,42 @@ import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
     container: {
-        width: "100%",
-        flexDirection: "row",
-        gap: 8,
-        alignItems: "center",
+        width: '100%',
+        flexDirection: 'row',
+        alignItems: 'flex-start',
         padding: 14,
         borderColor: colors.blue[900],
-        borderWidth: .5,
+        borderWidth: 0.5,
         borderRadius: 13,
-        flex: 1
-
-    },
-    detailsbox: {
-        gap: 16,
+        backgroundColor: '#fff',
     },
     checkbutton: {
         width: 60,
         height: 60,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 10,
+    },
+    detailsbox: {
+        flex: 1,
+        gap: 16,
+        flexShrink: 1,
+        minWidth: 0,
     },
     tasktitle: {
-        color: colors.orange[500],
-        fontWeight: "bold",
-        fontSize: 24
-    }
-
-})
+        color: colors.cyan,
+        fontWeight: 'bold',
+        fontSize: 16,
+        flexWrap: 'wrap',
+    },
+    taskdesc: {
+        fontSize: 14,
+        color: '#333',
+        flexWrap: 'wrap',
+    },
+    scheduledText: {
+        marginTop: 4,
+        fontSize: 12,
+        color: colors.gray[600],
+    },
+});

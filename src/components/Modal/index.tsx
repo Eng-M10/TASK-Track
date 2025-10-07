@@ -15,16 +15,16 @@ export function Details({ task, showModal, setShowModal }: Props) {
 
 
     return (
-        <Modal transparent visible={showModal} animationType='slide'>
+        <Modal transparent visible={showModal} animationType='slide' allowSwipeDismissal={true} >
             <View style={styles.modal}>
                 <View style={styles.modalContent}>
                     <View style={styles.modalHeader}>
-                        <Text style={styles.modalCategory}>{task.status}</Text>
+                        <Text style={styles.modalCategory}>Task</Text>
 
                         <TouchableOpacity onPress={() => setShowModal(false)}>
                             <MaterialIcons
                                 name="close"
-                                size={20}
+                                size={24}
                                 color={colors.gray[400]}
                             />
                         </TouchableOpacity>

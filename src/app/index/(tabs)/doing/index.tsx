@@ -1,44 +1,23 @@
 import { task, Task } from '@/components/Task'
 import * as taskSchema from '@/database/schemas/taskSchema'
+import { wait } from '@/utils/wait'
 import { useFocusEffect } from '@react-navigation/native'
 import { asc, eq } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/expo-sqlite'
 import { useSQLiteContext } from 'expo-sqlite'
 import React, { useCallback, useState } from 'react'
-import { Alert, FlatList, View } from 'react-native'
+import { FlatList, View } from 'react-native'
 import { styles } from './styles'
-
 
 export function Doing() {
 
-    const [status, setStatus] = useState("")
     const [tasks, setTasks] = useState<task[]>([])
+    const [loadingId, setLoadingId] = useState<number | null>(null);
+
+    const nextStatus = "done"
 
     function handleChangeStatus(task: task) {
-        switch (task.status) {
-            case "todo":
-                setStatus("doing")
-                break;
-            case "doing":
-                setStatus("done")
-                break;
-            case "done":
-                setStatus("todo")
-                break;
-            default:
-                setStatus("todo")
-                break;
-        }
-
-        // if (status === "todo") {
-        //     setStatus("doing")
-        // } else if (status === "doing") {
-        //     setStatus("done")
-        // } else {
-        //     setStatus("todo")
-        // }
-
-
+        setLoadingId(task.id);
         updatestatus(task.id)
 
     }
@@ -53,7 +32,6 @@ export function Doing() {
                 where: eq(taskSchema.tasks.status, 'doing'),
                 orderBy: [asc(taskSchema.tasks.priority), asc(taskSchema.tasks.schedule)]
             })
-
             setTasks(result)
 
         } catch (error) {
@@ -63,18 +41,19 @@ export function Doing() {
     }
 
     async function updatestatus(id: number) {
-
+        const start = Date.now()
         try {
 
-            const response = await db.update(taskSchema.tasks).set({
-                status
+            await db.update(taskSchema.tasks).set({
+                status: nextStatus
             }).where(eq(taskSchema.tasks.id, id))
-            Alert.alert(`TASK`, 'Pass to Done tasks list')
+            const elapsed = Date.now() - start
+            if (elapsed < 700) await wait(700 - elapsed)
             await fetchdoing()
         } catch (error) {
-
             console.log(error)
-
+        } finally {
+            setLoadingId(null)
         }
 
     }
@@ -91,7 +70,7 @@ export function Doing() {
                 data={tasks}
                 keyExtractor={item => item.id.toString()}
                 renderItem={({ item }) => (
-                    <Task task={item} onChangeStatus={() => handleChangeStatus(item)} />
+                    <Task task={item} loadingId={loadingId} onChangeStatus={() => handleChangeStatus(item)} />
                 )}
                 contentContainerStyle={{ gap: 14, padding: 14 }}
             />
