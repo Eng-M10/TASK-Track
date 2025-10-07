@@ -1,7 +1,8 @@
 import { colors } from '@/constants/colors';
 import { MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
-import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
+import { SpinnerIcon } from '../Spinner';
 import { styles } from './styles';
 
 export type task = {
@@ -33,7 +34,12 @@ export const Task = ({ task, onChangeStatus, statusstyle, loadingId }: Omit<Prop
                 disabled={loadingId === task.id}
             >
                 {loadingId === task.id ? (
-                    <ActivityIndicator size="large" color={colors.blue[800]} />
+                    task.status === 'todo' ?
+                        (<SpinnerIcon icon='autorenew' size={60} color={colors.orange[600]} />)
+                        : task.status === 'doing' ?
+                            (<SpinnerIcon icon='check-box-outline-blank' size={60} color={colors.cyan} />)
+                            : (<SpinnerIcon icon='check-box' size={60} color='green' />)
+
                 ) : task.status === 'todo' ? (
                     <MaterialIcons name="check-box-outline-blank" size={60} color={colors.cyan} />
                 ) : task.status === 'doing' ? (

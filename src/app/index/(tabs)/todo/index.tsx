@@ -8,7 +8,7 @@ import { asc, eq } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/expo-sqlite'
 import { useSQLiteContext } from 'expo-sqlite'
 import React, { useCallback, useState } from 'react'
-import { FlatList, TouchableOpacity, View } from 'react-native'
+import { FlatList, Text, TouchableOpacity, View } from 'react-native'
 import { styles } from './styles'
 
 
@@ -79,20 +79,28 @@ export function Todo() {
   );
   return (
     <View style={styles.container}>
+      {tasks.length > 0 ?
+        (<FlatList
 
-      <FlatList
+          data={tasks}
+          keyExtractor={item => item.id.toString()}
+          renderItem={({ item }) => (
+            <TouchableOpacity onPress={() => handleOpenDetails(item)}>
+              <Task task={item} statusstyle={{ color: colors.cyan }} loadingId={loadingId} onChangeStatus={() => handleChangeStatus(item)} />
+            </TouchableOpacity>
 
-        data={tasks}
-        keyExtractor={item => item.id.toString()}
-        renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => handleOpenDetails(item)}>
-            <Task task={item} statusstyle={{ color: colors.cyan }} loadingId={loadingId} onChangeStatus={() => handleChangeStatus(item)} />
-          </TouchableOpacity>
+            // <Task task={item} statusstyle={{ color: colors.cyan }} onChangeStatus={() => handleChangeStatus(item)} />
+          )}
+          contentContainerStyle={{ gap: 18, padding: 14 }}
+        />) :
 
-          // <Task task={item} statusstyle={{ color: colors.cyan }} onChangeStatus={() => handleChangeStatus(item)} />
+        (
+          <View style={{
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginTop: 100
+          }}><Text >No Tasks Added</Text></View>
         )}
-        contentContainerStyle={{ gap: 18, padding: 14 }}
-      />
 
       {
         selectedTask && (

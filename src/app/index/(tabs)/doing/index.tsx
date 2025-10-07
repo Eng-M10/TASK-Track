@@ -6,7 +6,7 @@ import { asc, eq } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/expo-sqlite'
 import { useSQLiteContext } from 'expo-sqlite'
 import React, { useCallback, useState } from 'react'
-import { FlatList, View } from 'react-native'
+import { FlatList, Text, View } from 'react-native'
 import { styles } from './styles'
 
 export function Doing() {
@@ -64,16 +64,24 @@ export function Doing() {
     );
     return (
         <View style={styles.container}>
+            {tasks.length > 0 ?
+                (<FlatList
 
-            <FlatList
+                    data={tasks}
+                    keyExtractor={item => item.id.toString()}
+                    renderItem={({ item }) => (
+                        <Task task={item} loadingId={loadingId} onChangeStatus={() => handleChangeStatus(item)} />
+                    )}
+                    contentContainerStyle={{ gap: 14, padding: 14 }}
+                />) : (
+                    <View style={{
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginTop: 100
+                    }}><Text>Nothing Doing ...</Text></View>
+                )
+            }
 
-                data={tasks}
-                keyExtractor={item => item.id.toString()}
-                renderItem={({ item }) => (
-                    <Task task={item} loadingId={loadingId} onChangeStatus={() => handleChangeStatus(item)} />
-                )}
-                contentContainerStyle={{ gap: 14, padding: 14 }}
-            />
         </View>
     )
 }
