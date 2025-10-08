@@ -15,7 +15,9 @@ export function Details({ task, showModal, setShowModal }: Props) {
 
 
     return (
-        <Modal transparent visible={showModal} animationType='slide' allowSwipeDismissal={true} >
+        <Modal transparent visible={showModal} animationType='slide' allowSwipeDismissal={true}
+
+        >
             <View style={styles.modal}>
                 <View style={styles.modalContent}>
                     <View style={styles.modalHeader}>
