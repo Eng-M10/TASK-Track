@@ -50,8 +50,8 @@
     "react-native-worklets": "0.5.1"
   },
   "devDependencies": {
-    "@react-native-community/cli": "latest",
     "@babel/core": "^7.28.4",
+    "@react-native-community/cli": "latest",
     "@types/react": "~19.1.0",
     "drizzle-kit": "^0.31.5",
     "eslint": "^9.25.0",

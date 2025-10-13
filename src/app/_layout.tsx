@@ -15,8 +15,14 @@ export default function Layout() {
   const expoDb = openDatabaseSync(DATABASE_NAME);
   const db = drizzle(expoDb)
 
-  useMigrations(db, migrations)
+  const { success, error } = useMigrations(db, migrations)
   useDrizzleStudio(expoDb)
+  if (!success && !error) {
+    return (
+      <ActivityIndicator size="large" />
+    )
+  }
+
   return (
     <Suspense fallback={<ActivityIndicator size="large" />}>
       <SQLiteProvider
@@ -24,8 +30,24 @@ export default function Layout() {
         options={{ enableChangeListener: true }}
         useSuspense>
         <Stack
-          screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.gray[400] } }}
-        />
+          screenOptions={{
+            headerShown: false,
+            contentStyle: { backgroundColor: colors.gray[400] }
+          }}
+        >
+          <Stack.Screen
+            name="index/index"
+          />
+          <Stack.Screen
+            name="add/index"
+          />
+          {/* <Stack.Screen
+            name="update/index"
+          />
+          <Stack.Screen
+            name="report/index"
+          /> */}
+        </Stack>
       </SQLiteProvider>
     </Suspense>
   )
