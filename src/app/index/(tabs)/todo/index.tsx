@@ -12,7 +12,6 @@ import { FlatList, Text, TouchableOpacity, View } from 'react-native'
 import { styles } from './styles'
 
 
-
 export function Todo() {
 
   const [tasks, setTasks] = useState<task[]>([])
@@ -27,15 +26,27 @@ export function Todo() {
     setShowModal(true);
   }
 
-  function handleChangeStatus(task: task) {
-    setLoadingId(task.id);
-    updatestatus(task.id)
-  }
+
+
+
 
   const database = useSQLiteContext()
   const db = drizzle(database, { schema: taskSchema })
 
-
+  async function handleChangeStatus(task: task) {
+    const start = Date.now()
+    setLoadingId(task.id);
+    try {
+      updatestatus(task.id)
+      const elapsed = Date.now() - start
+      if (elapsed < 700) await wait(700 - elapsed)
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoadingId(null);
+      fetchtodo();
+    }
+  }
   async function fetchtodo() {
     try {
       const result = await db.query.tasks.findMany({
@@ -51,8 +62,6 @@ export function Todo() {
 
   }
 
-
-
   async function updatestatus(id: number) {
     const start = Date.now()
     try {
@@ -60,17 +69,17 @@ export function Todo() {
       await db.update(taskSchema.tasks).set({
         status: nextStatus
       }).where(eq(taskSchema.tasks.id, id))
-
       const elapsed = Date.now() - start
       if (elapsed < 700) await wait(700 - elapsed)
       await fetchtodo()
     } catch (error) {
       console.log(error)
     } finally {
-      setLoadingId(null);
+      setLoadingId(null)
     }
 
   }
+
 
   useFocusEffect(
     useCallback(() => {

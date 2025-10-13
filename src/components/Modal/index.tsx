@@ -1,9 +1,9 @@
+import { Option } from "@/components/Option";
 import { task } from "@/components/Task";
 import { colors } from "@/constants/colors";
 import { MaterialIcons } from '@expo/vector-icons';
-import { Modal, Text, TouchableOpacity, View } from "react-native";
+import { Modal, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import { styles } from "./styles";
-
 type Props = {
     task: task
     showModal: boolean
@@ -14,38 +14,50 @@ type Props = {
 export function Details({ task, showModal, setShowModal }: Props) {
 
 
+    async function handleDelete() {
+        //taskdelete(task.id, { db })
+    }
+    function handleUpdate() {
+        console.log("update")
+    }
+    function handleUpdateStatus() {
+        console.log("update status")
+    }
+
     return (
-        <Modal transparent visible={showModal} animationType='slide' allowSwipeDismissal={true}
-
+        <Modal transparent visible={showModal}
+            animationType='slide'
+            allowSwipeDismissal={true}
+            statusBarTranslucent
         >
-            <View style={styles.modal}>
-                <View style={styles.modalContent}>
-                    <View style={styles.modalHeader}>
-                        <Text style={styles.modalCategory}>Task</Text>
+            <TouchableWithoutFeedback onPress={() => setShowModal(false)}>
+                <View style={styles.modal}>
 
-                        <TouchableOpacity onPress={() => setShowModal(false)}>
-                            <MaterialIcons
-                                name="close"
-                                size={24}
-                                color={colors.gray[400]}
-                            />
-                        </TouchableOpacity>
-                    </View>
+                    <TouchableWithoutFeedback>
+                        <View style={styles.modalContent}>
+                            <View style={styles.modalHeader}>
+                                <Text style={styles.modalCategory}>Task</Text>
 
-                    <Text style={styles.modalLinkName}>
-                        {task.title}
-                    </Text>
+                                <TouchableOpacity onPress={() => setShowModal(false)}>
+                                    <MaterialIcons
+                                        name="close"
+                                        size={24}
+                                        color={colors.gray[400]}
+                                    />
+                                </TouchableOpacity>
+                            </View>
 
-                    <Text style={styles.modalUrl}>
-                        {task.description}
-                    </Text>
-
-                    {/* <View style={styles.modalFooter}>
-              <Option name="Excluir" icon="delete" variant="secondary" onPress={handleRemove} />
-              <Option name="Abrir" icon="language" onPress={handleOpen} />
-            </View> */}
+                            <Text style={styles.modalLinkName}>{task.title}</Text>
+                            <Text style={styles.modalUrl}>{task.description}</Text>
+                            <View style={styles.options}>
+                                <Option icon="edit" name="Update" color={colors.blue[800]} onPress={handleUpdate} />
+                                <Option icon="delete" name="Delete" color="red" onPress={handleDelete} />
+                                <Option icon="arrow-forward-ios" name="Check" color="green" onPress={handleUpdateStatus} />
+                            </View>
+                        </View>
+                    </TouchableWithoutFeedback>
                 </View>
-            </View>
+            </TouchableWithoutFeedback>
         </Modal>
     )
 }

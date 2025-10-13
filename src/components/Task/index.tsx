@@ -10,7 +10,7 @@ export type task = {
     title: string,
     description: string | null,
     status: string,
-    schedule: string | Date,
+    schedule: Date,
     priority: number
 }
 

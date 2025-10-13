@@ -47,6 +47,11 @@ export const styles = StyleSheet.create({
         borderTopWidth: 1,
         borderTopColor: colors.gray[600],
         paddingVertical: 14,
+    },
+    options: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginTop: 32,
     }
 
 });
