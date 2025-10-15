@@ -1,14 +1,14 @@
 import { Select } from '@/components/Select';
 import { colors } from '@/constants/colors';
 import * as taskSchema from '@/database/schemas/taskSchema';
+import { agendarLembrete } from '@/services/notifications';
+import { wait } from '@/utils/wait';
 import { MaterialIcons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
 import { router } from 'expo-router';
 import { useSQLiteContext } from 'expo-sqlite';
 import React, { useState } from 'react';
-
-import { wait } from '@/utils/wait';
 import {
   ActivityIndicator,
   Alert,
@@ -22,10 +22,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from './styles';
 
 
-type Props = {
-  event: any;
-  selectedDate: Date | undefined;
-}
 
 type Task = {
   title: string
@@ -43,6 +39,7 @@ export default function Add() {
   const [textcaracter, setTextCaracter] = useState(0)
   const [showPicker, setShowPicker] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [mode, setMode] = useState<'date' | 'time'>('date');
 
   const maxLengt = 300
 
@@ -51,10 +48,7 @@ export default function Add() {
   const db = drizzle(database, { schema: taskSchema })
 
 
-
-
-  const handleSave = () => {
-
+  async function handleSave() {
 
     if (title.trim().length <= 0) {
       return alert("Title is required")
@@ -63,10 +57,15 @@ export default function Add() {
     } else if (!selected) {
       return alert("Priority is required")
     }
+    const notificationId = await agendarLembrete(
+      '⏰ Reminder',
+      `Pending Task : <strong> ${title} </strong> . Don't Forget`,
+      date.getTime()
+    );
 
     try {
       setLoading(true)
-      add({ title, description, priority: selected, schedule: date });
+      add({ title, description, priority: selected, schedule: date }, notificationId);
       router.back()
     } catch (error) {
       console.log(error)
@@ -79,26 +78,46 @@ export default function Add() {
 
   }
 
-  const onChangDate = ({ event, selectedDate }: Props) => {
-
-    if (selectedDate) {
-      const currentDate = selectedDate || date;
-      setDate(currentDate);
-    }
-    setShowPicker(Platform.OS === 'ios');
-
-  };
-
   const showDatepicker = () => {
+    setMode('date');
     setShowPicker(true);
   };
 
 
+  const onChangDate = (event: any, selectedDate?: Date) => {
+    if (event.type === 'dismissed') {
+      setShowPicker(false);
+      return;
+    }
 
-  async function add({ title, description, priority, schedule }: Task) {
+    if (mode === 'date' && selectedDate) {
+
+      const currentDate = new Date(selectedDate);
+      setDate(currentDate);
+
+      setShowPicker(false);
+      setTimeout(() => {
+        setMode('time');
+        setShowPicker(true);
+      }, 100);
+    }
+
+    if (mode === 'time' && selectedDate) {
+      // atualiza a hora na data existente
+      const newDate = new Date(date);
+      newDate.setHours(selectedDate.getHours());
+      newDate.setMinutes(selectedDate.getMinutes());
+      setDate(newDate);
+
+      setShowPicker(false);
+    }
+  };
+
+  async function add({ title, description, priority, schedule }: Task, notificationId: string) {
     const start = Date.now()
     try {
-      const response = await db.insert(taskSchema.tasks).values({ title, description, schedule, priority })
+
+      await db.insert(taskSchema.tasks).values({ title, description, schedule, priority, notificationId })
       Alert.alert("Save", "Task was added successfully")
       setTitle("")
       setDescription("")
@@ -110,8 +129,6 @@ export default function Add() {
       console.log(error)
     }
   }
-
-
 
   return (
     <SafeAreaView>
@@ -147,7 +164,7 @@ export default function Add() {
         />
         <Text style={[styles.label, {
           textAlign: "right",
-          opacity: .3,
+          opacity: .5,
           marginTop: -45,
           marginRight: 8
         }]}
@@ -158,7 +175,7 @@ export default function Add() {
         <Text style={styles.label}>Due Date:</Text>
         <TouchableOpacity onPress={showDatepicker} >
           <View style={styles.dateTextContainer} >
-            <Text style={styles.dateText}>{date.toLocaleDateString()}</Text>
+            <Text style={styles.dateText}>{date.toLocaleDateString()} - {date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
             <MaterialIcons name="edit-calendar" size={24} color={colors.blue[800]} />
           </View>
 
@@ -166,9 +183,9 @@ export default function Add() {
             <DateTimePicker
               testID="dateTimePicker"
               value={date}
-              mode="date"
-              display="default"
-              onChange={(event, selectedDate) => onChangDate({ event, selectedDate })}
+              mode={mode}
+              display={Platform.OS === 'ios' ? 'inline' : 'default'}
+              onChange={onChangDate}
             />
           )}
         </TouchableOpacity>

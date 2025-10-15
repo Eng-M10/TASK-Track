@@ -9,6 +9,7 @@ export const tasks = sqliteTable('tasks', {
     status: text('status').notNull().default('todo'),
     schedule: integer('schedule', { mode: 'timestamp' }).$default(() => sql`(CURRENT_TIMESTAMP)`).notNull(),
     priority: integer('priority').notNull().default(1),
+    notificationId: text('notificationId'),
     createdAt: integer('created_at', { mode: 'timestamp' }).$default(() => sql`(CURRENT_TIMESTAMP)`).notNull(),
 
 });
