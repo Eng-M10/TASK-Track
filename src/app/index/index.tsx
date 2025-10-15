@@ -1,7 +1,7 @@
 import { Doing } from '@/app/index/(tabs)/doing';
 import { FloatingButton } from '@/components/FAB';
 import { colors } from '@/constants/colors';
-import { solicitarPermissao } from '@/services/notifications';
+import { setupChannel, solicitarPermissao } from '@/services/notifications';
 import { MaterialIcons } from '@expo/vector-icons';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { router } from 'expo-router';
@@ -14,20 +14,20 @@ import { styles } from './styles';
 
 const Tab = createMaterialTopTabNavigator();
 
-
 export default function Index() {
-
 
 
   useEffect(() => {
     (async () => {
       await solicitarPermissao();
+      await setupChannel();
     })();
   }, []);
 
 
   return (
     <SafeAreaView style={styles.container}>
+
       <View style={styles.header}>
         <View style={styles.titleContainer}><Text style={styles.title}>Tasks</Text></View>
         <TouchableOpacity >

@@ -60,7 +60,7 @@ export default function Add() {
     const notificationId = await agendarLembrete(
       '⏰ Reminder',
       `Pending Task : <strong> ${title} </strong> . Don't Forget`,
-      date.getTime()
+      date
     );
 
     try {
