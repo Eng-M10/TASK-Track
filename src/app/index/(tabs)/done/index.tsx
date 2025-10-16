@@ -1,14 +1,16 @@
 import { Details } from '@/components/Modal'
 import { task, Task } from '@/components/Task'
 import { colors } from '@/constants/colors'
+import { useSearch } from '@/contexts/SearchContext'
 import * as taskSchema from '@/database/schemas/taskSchema'
 import { wait } from '@/utils/wait'
 import { useFocusEffect } from '@react-navigation/native'
-import { asc, eq } from 'drizzle-orm'
+import { and, asc, eq, like } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/expo-sqlite'
 import { useSQLiteContext } from 'expo-sqlite'
 import React, { useCallback, useState } from 'react'
 import { Alert, FlatList, Text, TouchableOpacity, View } from 'react-native'
+import Toast from 'react-native-toast-message'
 import { styles } from './styles'
 
 export function Done() {
@@ -17,6 +19,7 @@ export function Done() {
     const [showModal, setShowModal] = useState(false);
     const [selectedTask, setSelectedTask] = useState<task | null>(null);
     const [loadingId, setLoadingId] = useState<number | null>(null);
+    const { search } = useSearch()
 
     const database = useSQLiteContext()
     const db = drizzle(database, { schema: taskSchema })
@@ -39,6 +42,11 @@ export function Done() {
                 onPress: async () => {
                     try {
                         deletetask(id)
+                        Toast.show({
+                            type: 'success',
+                            text1: 'Task Deleted',
+                            position: 'bottom',
+                        });
                     } catch (error) {
                         console.log(error)
                         Alert.alert("Delete", "Error Delete Task.")
@@ -59,7 +67,7 @@ export function Done() {
     async function fetchdone() {
         try {
             const result = await db.query.tasks.findMany({
-                where: eq(taskSchema.tasks.status, 'done'),
+                where: and(eq(taskSchema.tasks.status, 'done'), like(taskSchema.tasks.title, `%${search}%`)),
                 orderBy: [asc(taskSchema.tasks.priority), asc(taskSchema.tasks.schedule)]
             })
 
@@ -98,7 +106,7 @@ export function Done() {
     useFocusEffect(
         useCallback(() => {
             fetchdone();
-        }, [])
+        }, [search])
     );
 
     return (

@@ -12,6 +12,7 @@ import React, { useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
+  KeyboardAvoidingView,
   Platform,
   Text,
   TextInput,
@@ -141,84 +142,90 @@ export default function Add() {
         </View>
       </View>
 
-      <View style={styles.form}>
-        <Text style={styles.label}>Task Title :</Text>
-        <TextInput style={styles.input}
-          onChangeText={setTitle}
-          placeholder='Title'
-          value={title}
-        />
 
-        <Text style={styles.label}>Descriptions :</Text>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
+      >
+        <View style={styles.form}>
+          <Text style={styles.label}>Task Title :</Text>
+          <TextInput style={styles.input}
+            onChangeText={setTitle}
+            placeholder='Title'
+            value={title}
+          />
 
-        <TextInput
-          style={styles.textarea}
-          onChangeText={(value) => [setTextCaracter(value.length), setDescription(value)]}
-          numberOfLines={4}
-          multiline
-          maxLength={maxLengt}
-          value={description}
-          placeholder={'Describe the new task here...'}
-          textAlignVertical="top"
-          underlineColorAndroid={'transparent'}
-        />
-        <Text style={[styles.label, {
-          textAlign: "right",
-          opacity: .5,
-          marginTop: -45,
-          marginRight: 8
-        }]}
-        >
-          {textcaracter}/{maxLengt}
-        </Text>
+          <Text style={styles.label}>Descriptions :</Text>
 
-        <Text style={styles.label}>Due Date:</Text>
-        <TouchableOpacity onPress={showDatepicker} >
-          <View style={styles.dateTextContainer} >
-            <Text style={styles.dateText}>{date.toLocaleDateString()} - {date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
-            <MaterialIcons name="edit-calendar" size={24} color={colors.blue[800]} />
-          </View>
+          <TextInput
+            style={styles.textarea}
+            onChangeText={(value) => [setTextCaracter(value.length), setDescription(value)]}
+            numberOfLines={4}
+            multiline
+            maxLength={maxLengt}
+            value={description}
+            placeholder={'Describe the new task here...'}
+            textAlignVertical="top"
+            underlineColorAndroid={'transparent'}
+          />
+          <Text style={[styles.label, {
+            textAlign: "right",
+            opacity: .5,
+            marginTop: -45,
+            marginRight: 8
+          }]}
+          >
+            {textcaracter}/{maxLengt}
+          </Text>
 
-          {showPicker && (
-            <DateTimePicker
-              testID="dateTimePicker"
-              value={date}
-              mode={mode}
-              display={Platform.OS === 'ios' ? 'inline' : 'default'}
-              onChange={onChangDate}
-            />
-          )}
-        </TouchableOpacity>
-        <Text style={styles.label}>Priority :</Text>
+          <Text style={styles.label}>Due Date:</Text>
+          <TouchableOpacity onPress={showDatepicker} >
+            <View style={styles.dateTextContainer} >
+              <Text style={styles.dateText}>{date.toLocaleDateString()} - {date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
+              <MaterialIcons name="edit-calendar" size={24} color={colors.blue[800]} />
+            </View>
 
-        <Select
-          value={selected}
-          onValueChange={
-            setSelected}
-          items={[
-            { label: 'Low', value: 3 },
-            { label: 'Medium', value: 2 },
-            { label: 'High', value: 1 }
-          ]
-          }
-        />
-        {/* <TouchableOpacity style={styles.button} onPress={() => { handleSave() }}>
+            {showPicker && (
+              <DateTimePicker
+                testID="dateTimePicker"
+                value={date}
+                mode={mode}
+                display={Platform.OS === 'ios' ? 'inline' : 'default'}
+                onChange={onChangDate}
+              />
+            )}
+          </TouchableOpacity>
+          <Text style={styles.label}>Priority :</Text>
+
+          <Select
+            value={selected}
+            onValueChange={
+              setSelected}
+            items={[
+              { label: 'Low', value: 3 },
+              { label: 'Medium', value: 2 },
+              { label: 'High', value: 1 }
+            ]
+            }
+          />
+          {/* <TouchableOpacity style={styles.button} onPress={() => { handleSave() }}>
           <Text>Add Task</Text>
         </TouchableOpacity> */}
 
-        <TouchableOpacity
-          style={[styles.button, loading && { opacity: 0.6 }]}
-          onPress={handleSave}
-          disabled={loading}
-        >
-          {loading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text>Save</Text>
-          )}
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.button, loading && { opacity: 0.6 }]}
+            onPress={handleSave}
+            disabled={loading}
+          >
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text>Save</Text>
+            )}
+          </TouchableOpacity>
 
-      </View>
+        </View>
+      </KeyboardAvoidingView>
 
     </SafeAreaView >
   )

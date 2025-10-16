@@ -1,9 +1,10 @@
 import { Details } from '@/components/Modal'
 import { task, Task } from '@/components/Task'
+import { useSearch } from '@/contexts/SearchContext'
 import * as taskSchema from '@/database/schemas/taskSchema'
 import { wait } from '@/utils/wait'
 import { useFocusEffect } from '@react-navigation/native'
-import { asc, eq } from 'drizzle-orm'
+import { and, asc, eq, like } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/expo-sqlite'
 import { useSQLiteContext } from 'expo-sqlite'
 import React, { useCallback, useState } from 'react'
@@ -17,6 +18,7 @@ export function Doing() {
     const [showModal, setShowModal] = useState(false);
     const [loadingId, setLoadingId] = useState<number | null>(null);
 
+    const { search } = useSearch()
 
 
     function handleOpenDetails(task: task) {
@@ -40,7 +42,7 @@ export function Doing() {
     async function fetchdoing() {
         try {
             const result = await db.query.tasks.findMany({
-                where: eq(taskSchema.tasks.status, 'doing'),
+                where: and(eq(taskSchema.tasks.status, 'doing'), like(taskSchema.tasks.title, `%${search}%`)),
                 orderBy: [asc(taskSchema.tasks.priority), asc(taskSchema.tasks.schedule)]
             })
             setTasks(result)
@@ -71,7 +73,7 @@ export function Doing() {
     useFocusEffect(
         useCallback(() => {
             fetchdoing();
-        }, [])
+        }, [search])
     );
     return (
         <View style={styles.container}>
