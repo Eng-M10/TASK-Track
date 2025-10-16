@@ -9,6 +9,7 @@ import { drizzle } from 'drizzle-orm/expo-sqlite'
 import { useSQLiteContext } from 'expo-sqlite'
 import React, { useCallback, useState } from 'react'
 import { Alert, FlatList, Text, TouchableOpacity, View } from 'react-native'
+import { Toast } from 'toastify-react-native'
 import { styles } from './styles'
 
 
@@ -85,6 +86,17 @@ export function Todo() {
     try {
       await db.delete(taskSchema.tasks).where(eq(taskSchema.tasks.id, id));
       Alert.alert("DELETE", "Task Deleted")
+      Toast.show({
+        type: 'success',
+        text1: 'Task Deleted',
+        position: 'bottom',
+        visibilityTime: 4000,
+        autoHide: true,
+        backgroundColor: colors.gray[600],
+        iconColor: "#0CFF0A",
+        iconSize: 24,
+
+      })
     } catch (error) {
       console.log(error)
       Alert.alert("DELETE", "Error deleting task, try again!")
