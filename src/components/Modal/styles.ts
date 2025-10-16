@@ -8,7 +8,7 @@ export const styles = StyleSheet.create({
         justifyContent: "flex-end",
     },
     modalContent: {
-        backgroundColor: colors.cyan,
+        backgroundColor: colors.blue[900],
         borderTopWidth: 1,
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,

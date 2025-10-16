@@ -8,21 +8,18 @@ type Props = {
     task: task
     showModal: boolean
     setShowModal: (show: boolean) => void
+    screen: string,
+    handleDelete?: () => void,
+    handleUpdate?: () => void,
+    handleCheck?: () => void,
+    handleUnCheck?: () => void,
+    handleReview?: () => void
 }
 
+export function Details({ task, showModal, setShowModal, screen, handleDelete, handleUpdate, handleCheck, handleUnCheck, handleReview }: Props) {
 
-export function Details({ task, showModal, setShowModal }: Props) {
 
 
-    async function handleDelete() {
-        //taskdelete(task.id, { db })
-    }
-    function handleUpdate() {
-        console.log("update")
-    }
-    function handleUpdateStatus() {
-        console.log("update status")
-    }
 
     return (
         <Modal transparent visible={showModal}
@@ -49,11 +46,32 @@ export function Details({ task, showModal, setShowModal }: Props) {
 
                             <Text style={styles.modalLinkName}>{task.title}</Text>
                             <Text style={styles.modalUrl}>{task.description}</Text>
-                            <View style={styles.options}>
-                                <Option icon="edit" name="Update" color={colors.blue[800]} onPress={handleUpdate} />
-                                <Option icon="delete" name="Delete" color="red" onPress={handleDelete} />
-                                <Option icon="arrow-forward-ios" name="Check" color="green" onPress={handleUpdateStatus} />
-                            </View>
+                            {screen === 'todo' ?
+                                (<View style={styles.options}>
+
+                                    <Option icon="edit" name="Update" color="white" onPress={handleUpdate} />
+                                    <Option icon="delete" name="Delete" color="red" onPress={handleDelete} />
+                                    <Option icon="arrow-forward-ios" name="Check" color="green" onPress={handleCheck} />
+
+                                </View>) :
+                                screen === 'doing' ?
+                                    (<View style={styles.options}>
+
+                                        <Option icon="arrow-back-ios" name="Uncheck" color="green" onPress={handleUnCheck} />
+                                        <Option icon="edit" name="Update" color="white" onPress={handleUpdate} />
+                                        <Option icon="arrow-forward-ios" name="check" color="red" onPress={handleCheck} />
+
+                                    </View>) : (
+                                        <View style={styles.options}>
+
+                                            <Option icon="arrow-back-ios" name="Uncheck" color="green" onPress={handleUnCheck} />
+                                            <Option icon="delete" name="Delete" color="red" onPress={handleDelete} />
+                                            <Option icon="repeat" name="Review" color="green" onPress={handleReview} />
+
+                                        </View>)
+                            }
+
+
                         </View>
                     </TouchableWithoutFeedback>
                 </View>

@@ -1,3 +1,4 @@
+import { Details } from '@/components/Modal'
 import { task, Task } from '@/components/Task'
 import { colors } from '@/constants/colors'
 import * as taskSchema from '@/database/schemas/taskSchema'
@@ -7,22 +8,52 @@ import { asc, eq } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/expo-sqlite'
 import { useSQLiteContext } from 'expo-sqlite'
 import React, { useCallback, useState } from 'react'
-import { FlatList, Text, View } from 'react-native'
+import { Alert, FlatList, Text, TouchableOpacity, View } from 'react-native'
 import { styles } from './styles'
 
 export function Done() {
 
     const [tasks, setTasks] = useState<task[]>([])
+    const [showModal, setShowModal] = useState(false);
+    const [selectedTask, setSelectedTask] = useState<task | null>(null);
     const [loadingId, setLoadingId] = useState<number | null>(null);
-    const nextStatus = "todo"
-
-    function handleChangeStatus(task: task) {
-        setLoadingId(task.id)
-        updatestatus(task.id)
-    }
 
     const database = useSQLiteContext()
     const db = drizzle(database, { schema: taskSchema })
+
+    function handleChangeStatus(task: task, nextStatus: string) {
+        setLoadingId(task.id)
+        updatestatus(task.id, nextStatus)
+        if (showModal)
+            setShowModal(false)
+    }
+
+    function handleDeleteTask(id: number) {
+        Alert.alert("Delete", "Confirm Remove", [
+            {
+                text: "Cancel",
+                style: "cancel"
+            },
+            {
+                text: "Yes",
+                onPress: async () => {
+                    try {
+                        deletetask(id)
+                    } catch (error) {
+                        console.log(error)
+                        Alert.alert("Delete", "Error Delete Task.")
+                    } finally {
+                        setShowModal(false)
+                        fetchdone()
+                    }
+                }
+            }
+        ])
+    }
+    function handleOpenDetails(task: task) {
+        setSelectedTask(task);
+        setShowModal(true);
+    }
 
 
     async function fetchdone() {
@@ -40,7 +71,7 @@ export function Done() {
 
     }
 
-    async function updatestatus(id: number) {
+    async function updatestatus(id: number, nextStatus: string) {
         const start = Date.now()
         try {
             await db.update(taskSchema.tasks).set({
@@ -53,6 +84,14 @@ export function Done() {
             console.log(error)
         } finally {
             setLoadingId(null)
+        }
+    }
+    async function deletetask(id: number) {
+        try {
+            await db.delete(taskSchema.tasks).where(eq(taskSchema.tasks.id, id));
+        } catch (error) {
+            console.log(error)
+            throw error
         }
     }
 
@@ -71,7 +110,9 @@ export function Done() {
                     data={tasks}
                     keyExtractor={item => item.id.toString()}
                     renderItem={({ item }) => (
-                        <Task task={item} loadingId={loadingId} statusstyle={{ textDecorationLine: 'line-through', color: colors.gray[600] }} onChangeStatus={() => handleChangeStatus(item)} />
+                        <TouchableOpacity onPress={() => handleOpenDetails(item)}>
+                            <Task task={item} loadingId={loadingId} statusstyle={{ textDecorationLine: 'line-through', color: colors.gray[600] }} onChangeStatus={() => handleChangeStatus(item, "todo")} />
+                        </TouchableOpacity>
                     )}
                     contentContainerStyle={{ gap: 14, padding: 14 }}
                 />) :
@@ -82,6 +123,21 @@ export function Done() {
                         marginTop: 100
                     }}><Text>Nothing Done</Text></View>
                 )}
+            {
+                selectedTask && (
+                    <Details
+                        task={selectedTask}
+                        showModal={showModal}
+                        setShowModal={setShowModal}
+                        screen='done'
+                        handleUnCheck={() => { handleChangeStatus(selectedTask, "doing") }}
+                        handleDelete={() => { handleDeleteTask(selectedTask.id) }}
+                        handleReview={() => { console.log("Reviewing") }}
+
+                    />
+                )}
+
+
         </View>
     )
 }

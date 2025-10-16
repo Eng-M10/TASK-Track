@@ -8,7 +8,7 @@ import { asc, eq } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/expo-sqlite'
 import { useSQLiteContext } from 'expo-sqlite'
 import React, { useCallback, useState } from 'react'
-import { FlatList, Text, TouchableOpacity, View } from 'react-native'
+import { Alert, FlatList, Text, TouchableOpacity, View } from 'react-native'
 import { styles } from './styles'
 
 
@@ -20,33 +20,34 @@ export function Todo() {
   const [loadingId, setLoadingId] = useState<number | null>(null);
   const nextStatus = "doing"
 
-  function handleOpenDetails(task: task) {
+  const database = useSQLiteContext()
+  const db = drizzle(database, { schema: taskSchema })
 
+  function handleOpenDetails(task: task) {
     setSelectedTask(task);
     setShowModal(true);
   }
 
 
-
-
-
-  const database = useSQLiteContext()
-  const db = drizzle(database, { schema: taskSchema })
-
-  async function handleChangeStatus(task: task) {
+  async function handleChangeStatus(id: number) {
     const start = Date.now()
-    setLoadingId(task.id);
+    setLoadingId(id);
     try {
-      updatestatus(task.id)
+      updatestatus(id)
       const elapsed = Date.now() - start
       if (elapsed < 700) await wait(700 - elapsed)
     } catch (error) {
       console.log(error)
     } finally {
       setLoadingId(null);
+      if (showModal)
+        setShowModal(false)
       fetchtodo();
     }
+
   }
+
+
   async function fetchtodo() {
     try {
       const result = await db.query.tasks.findMany({
@@ -80,6 +81,19 @@ export function Todo() {
 
   }
 
+  async function deletetask(id: number) {
+    try {
+      await db.delete(taskSchema.tasks).where(eq(taskSchema.tasks.id, id));
+      Alert.alert("DELETE", "Task Deleted")
+    } catch (error) {
+      console.log(error)
+      Alert.alert("DELETE", "Error deleting task, try again!")
+    } finally {
+      fetchtodo()
+      setShowModal(false)
+    }
+
+  }
 
   useFocusEffect(
     useCallback(() => {
@@ -95,7 +109,7 @@ export function Todo() {
           keyExtractor={item => item.id.toString()}
           renderItem={({ item }) => (
             <TouchableOpacity onPress={() => handleOpenDetails(item)}>
-              <Task task={item} statusstyle={{ color: colors.cyan }} loadingId={loadingId} onChangeStatus={() => handleChangeStatus(item)} />
+              <Task task={item} statusstyle={{ color: colors.cyan }} loadingId={loadingId} onChangeStatus={() => handleChangeStatus(item.id)} />
             </TouchableOpacity>
 
             // <Task task={item} statusstyle={{ color: colors.cyan }} onChangeStatus={() => handleChangeStatus(item)} />
@@ -117,6 +131,11 @@ export function Todo() {
             task={selectedTask}
             showModal={showModal}
             setShowModal={setShowModal}
+            screen='todo'
+            handleUpdate={() => { console.log("update") }}
+            handleDelete={() => { deletetask(selectedTask.id) }}
+            handleCheck={() => { handleChangeStatus(selectedTask.id) }}
+
           />
         )}
     </View>

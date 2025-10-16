@@ -1,9 +1,13 @@
 import notifee, { AndroidImportance, TimestampTrigger, TriggerType } from '@notifee/react-native';
-
+import NotificationSounds from 'react-native-notification-sounds';
+const soundsList = await NotificationSounds.getNotifications('notification')
 export async function setupChannel() {
     const id = await notifee.createChannel({
         id: '1',
         name: 'Remainder',
+        vibration: true,
+        vibrationPattern: [300, 500],
+        sound: soundsList[1].url,
         importance: AndroidImportance.HIGH,
     });
     return id;
@@ -26,7 +30,8 @@ export async function agendarLembrete(title: string, body: string, date: Date) {
             title,
             body,
             android: {
-                channelId: channelid
+                channelId: channelid,
+                vibrationPattern: [300, 500]
             }
         },
         trigger
